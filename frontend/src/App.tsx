@@ -1,6 +1,7 @@
 import { useState } from "react";
 import UsersTable from "./components/users-table";
 import FilesTable from "./components/files-table";
+import { Box, Button, Flex, Heading, Text, TextArea } from "@radix-ui/themes";
 
 function App() {
   const [text, setText] = useState("");
@@ -20,34 +21,29 @@ function App() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="p-4 max-w-xl mx-auto">
-          <h1 className="text-xl font-bold mb-4">
-            Text-to-Speech Demo (Fire & Forget)
-          </h1>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block mb-1 font-medium">
-                Text to Speak (no response):
-              </label>
-              <textarea
-                rows={5}
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                className="border w-full p-2 text-black"
-              />
-            </div>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded"
-            >
-              Send Request
-            </button>
-          </form>
-        </div>
+    <Flex direction="column" align="center" gap="6" p="6" className="min-h-screen">
+      <Box maxWidth="600px" width="100%">
+        <Heading as="h1" size="6" mb="4">
+          Text-to-Speech Demo (Fire & Forget)
+        </Heading>
+        <form onSubmit={handleSubmit}>
+          <Flex direction="column" gap="3">
+            <Text as="label" htmlFor="tts-input" weight="medium">
+              Text to Speak (no response):
+            </Text>
+            <TextArea
+              id="tts-input"
+              rows={5}
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+            />
+            <Button type="submit">Send Request</Button>
+          </Flex>
+        </form>
+      </Box>
       <UsersTable />
       <FilesTable />
-    </main>
+    </Flex>
   );
 }
 
