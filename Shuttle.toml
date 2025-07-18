@@ -1,0 +1,9 @@
+[deploy]
+include = [
+    "frontend/dist/*",
+]
+
+[build]
+assets = [
+    "frontend/dist/*",
+]

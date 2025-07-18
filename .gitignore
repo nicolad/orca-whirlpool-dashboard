@@ -1,0 +1,6 @@
+/target
+.shuttle-storage
+**/Secrets*.toml
+.shuttle*
+Secrets*.toml
+*DS_Store
