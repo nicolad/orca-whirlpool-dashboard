@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { SignIn, SignedIn, SignedOut } from "@clerk/clerk-react";
 import UsersTable from "./components/users-table";
 import FilesTable from "./components/files-table";
 
@@ -22,11 +21,7 @@ function App() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <SignedOut>
-        <SignIn />
-      </SignedOut>
-      <SignedIn>
-        <div className="p-4 max-w-xl mx-auto">
+      <div className="p-4 max-w-xl mx-auto">
           <h1 className="text-xl font-bold mb-4">
             Text-to-Speech Demo (Fire & Forget)
           </h1>
@@ -50,9 +45,8 @@ function App() {
             </button>
           </form>
         </div>
-        <UsersTable />
-        <FilesTable />
-      </SignedIn>
+      <UsersTable />
+      <FilesTable />
     </main>
   );
 }

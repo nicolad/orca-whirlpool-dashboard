@@ -7,7 +7,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { UserButton } from "@clerk/clerk-react";
 import { Loader } from "lucide-react";
 import useSWR from "swr";
 
@@ -24,9 +23,6 @@ export default function UsersTable() {
 
   return (
     <>
-      <div className="fixed top-6 right-6">
-        <UserButton afterSignOutUrl="/" />
-      </div>
       {isLoading && <Loader className="w-4 h-4 animate-spin" />}
       {!isLoading && (
         <Table>

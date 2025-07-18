@@ -9,7 +9,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { UserButton } from "@clerk/clerk-react";
 import { Loader as LucideLoader } from "lucide-react";
 import useSWR from "swr";
 
@@ -39,9 +38,6 @@ export default function FilesTable() {
   if (!data || data.length === 0) {
     return (
       <>
-        <div className="fixed top-6 right-6">
-          <UserButton afterSignOutUrl="/" />
-        </div>
         <p>No files found.</p>
       </>
     );
@@ -50,9 +46,6 @@ export default function FilesTable() {
   // 4) Otherwise, render them in a table
   return (
     <>
-      <div className="fixed top-6 right-6">
-        <UserButton afterSignOutUrl="/" />
-      </div>
       <Table>
         <TableHeader>
           <TableRow>

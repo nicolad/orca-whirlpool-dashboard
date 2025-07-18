@@ -1,4 +1,1 @@
-use clerk_rs::clerk::Clerk;
-pub struct AppState {
-    pub client: Clerk,
-}
+pub struct AppState;
