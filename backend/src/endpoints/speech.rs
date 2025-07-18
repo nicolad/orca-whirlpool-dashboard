@@ -1,11 +1,9 @@
 use actix_web::{
-    dev::ServiceRequest,
     post,
-    web::{self, Json},
-    HttpRequest, HttpResponse, Responder,
+    web::Json,
+    HttpResponse, Responder,
 };
 use chrono::Local;
-use clerk_rs::{apis::users_api::User, validators::actix::clerk_authorize};
 use futures::future::join_all;
 use serde::Deserialize;
 use serde_json::json;
@@ -13,7 +11,6 @@ use std::fs;
 use tokio::task;
 use tracing::info;
 
-use crate::app_state::AppState;
 use crate::services::tts_service::call_openai_tts;
 use crate::utils::{chunk_text_unicode::chunk_text_unicode, concat_mp3::concat_mp3};
 
@@ -24,43 +21,12 @@ pub struct UserInput {
 
 #[post("/speech")]
 pub async fn get_speech(
-    state: web::Data<AppState>,
-    req: HttpRequest,
     payload: Json<UserInput>,
 ) -> impl Responder {
     info!("POST /speech endpoint called");
 
-    // 1) Authorize the request with Clerk
-    let srv_req = ServiceRequest::from_request(req);
-    info!("Attempting to authorize request with Clerk");
-
-    let jwt = match clerk_authorize(&srv_req, &state.client, true).await {
-        Ok(value) => {
-            info!("clerk_authorize successful for user_id: {}", value.1.sub);
-            value.1
-        }
-        Err(e) => {
-            info!("clerk_authorize failed: {:?}", e);
-            return e; // e is an actix_web::Error
-        }
-    };
-
-    // 2) Optionally fetch the user
-    info!("Fetching user data from Clerk for sub: {}", jwt.sub);
-    let Ok(user) = User::get_user(&state.client, &jwt.sub).await else {
-        info!("Unable to retrieve user data");
-        return HttpResponse::InternalServerError().json(json!({
-            "message": "Unable to retrieve user",
-        }));
-    };
-
-    // 3) Obtain user's first name
-    let user_first_name = user
-        .first_name
-        .clone()
-        .unwrap_or(Some("User".to_string()))
-        .unwrap_or("User".to_string());
-    info!("User first_name is: {}", user_first_name);
+    // 1) Determine the user name (authentication removed)
+    let user_first_name = "User";
 
     // 4) Prepare text for TTS
     info!("Preparing text for TTS");
@@ -84,7 +50,7 @@ pub async fn get_speech(
     }
 
     // 6) Create folder path: user_files/<user_id>/<timestamp>
-    let user_id = &jwt.sub;
+    let user_id = "public";
     let now = Local::now();
     let timestamp = now.format("%Y-%m-%d-%H:%M").to_string();
     let folder_path = format!("user_files/{}/{}", user_id, timestamp);

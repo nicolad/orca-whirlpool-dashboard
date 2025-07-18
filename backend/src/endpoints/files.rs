@@ -1,16 +1,13 @@
 use actix_web::{
-    dev::ServiceRequest,
     get,
     web::{self, ServiceConfig},
-    HttpRequest, HttpResponse, Responder,
+    HttpResponse, Responder,
 };
 use chrono::NaiveDateTime;
-use clerk_rs::{apis::users_api::User, validators::actix::clerk_authorize};
 use crate::utils::convert_to_mp4::convert_to_mp4;
 use serde::Serialize;
 use std::fs;
 
-use crate::app_state::AppState;
 
 /// Holds data for each discovered `final.mp3`.
 #[derive(Debug)]
@@ -32,16 +29,9 @@ struct FinalFileResponse {
 /// Returns all final.mp3 files for the current user, sorted by the timestamp
 /// embedded in the folder name (e.g. "2025-04-03-14:03").
 #[get("/files")]
-async fn list_speech_files(state: web::Data<AppState>, req: HttpRequest) -> impl Responder {
-    // 1) Authorize via Clerk
-    let srv_req = ServiceRequest::from_request(req);
-    let jwt = match clerk_authorize(&srv_req, &state.client, true).await {
-        Ok(value) => value.1,
-        Err(e) => return e,
-    };
-
-    // 2) Build path: user_files/<user_id>
-    let user_id = &jwt.sub;
+async fn list_speech_files() -> impl Responder {
+    // 1) Build path: user_files/<user_id>
+    let user_id = "public";
     let user_dir_path = format!("user_files/{}", user_id);
 
     // 3) Read top-level directory for this user
@@ -109,17 +99,9 @@ async fn list_speech_files(state: web::Data<AppState>, req: HttpRequest) -> impl
 /// returns the MP4 bytes. If the MP4 already exists it is reused.
 #[get("/files/{dir_name}/mp4")]
 async fn mp4_for_file(
-    state: web::Data<AppState>,
-    req: HttpRequest,
     path: web::Path<String>,
 ) -> impl Responder {
-    let srv_req = ServiceRequest::from_request(req);
-    let jwt = match clerk_authorize(&srv_req, &state.client, true).await {
-        Ok(value) => value.1,
-        Err(e) => return e,
-    };
-
-    let user_id = &jwt.sub;
+    let user_id = "public";
     let dir_name = path.into_inner();
     // Build paths under user_files
     let folder_path = format!("user_files/{}/{}", user_id, dir_name);
